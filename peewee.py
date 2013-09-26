@@ -2209,11 +2209,14 @@ class ModelOptions(object):
         if self.order_by:
             norm_order_by = []
             for clause in self.order_by:
-                field = self.fields[clause.lstrip('-')]
-                if clause.startswith('-'):
-                    norm_order_by.append(field.desc())
+                if isinstance(clause, Field):
+                    norm_order_by.append(clause)
                 else:
-                    norm_order_by.append(field.asc())
+                    field = self.fields[clause.lstrip('-')]
+                    if clause.startswith('-'):
+                        norm_order_by.append(field.desc())
+                    else:
+                        norm_order_by.append(field.asc())
             self.order_by = norm_order_by
 
     def get_default_dict(self):
